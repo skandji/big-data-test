@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:latest
+    volumes:
+      - ./data:/var/lib/mysql
+    restart: always
+    ports:
+      - 3361:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: PassWord23!
