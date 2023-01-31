@@ -55,6 +55,7 @@ object SparkAndHbase {
       .load("C:\\Users\\hp\\IdeaProjects\\BigdataTest\\src\\main\\resources\\data\\orders.txt")
 
     dfOrders.write
+      .option("hbase.spark.use.hbasecontext", true)
       .format("org.apache.spark.sql.execution.datasources.hbase")
       .options(Map(HBaseTableCatalog.tableCatalog -> catalogOrders, HBaseTableCatalog.newTable -> "3"))
       .save()
