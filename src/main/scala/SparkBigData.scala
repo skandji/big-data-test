@@ -1,5 +1,6 @@
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.logging.log4j.{LogManager, Logger}
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import org.apache.spark.rdd.RDD
@@ -15,7 +16,7 @@ import java.io.FileNotFoundException
 object SparkBigData {
 
   var ss : SparkSession = null
-  // private var trace_log : Logger = LogManager.getLogger("Logger_Console")
+  val traceLog: Logger = LogManager.getLogger("Spark_Big_Data_Logger")
 
   def main(args: Array[String]): Unit = {
 
@@ -28,8 +29,14 @@ object SparkBigData {
     // dataFramePart(sparkSession)
     // useCase1(sparkContext)
     // advancedRequests(sparkSession)
-    getOrdersByClient(sparkSession)
+    // getOrdersByClient(sparkSession)
     // hdfsPart(sparkContext)
+
+    val df = readDataFrameFromFile(sparkSession, "C:\\Users\\hp\\IdeaProjects\\BigdataTest\\src\\main\\resources\\data\\orders.txt",
+    "\t",true,null)
+    if (df != null) {
+      df.show()
+    }
   }
 
   def hdfsPart(sparkContext: SparkContext): Unit = {
@@ -471,4 +478,28 @@ object SparkBigData {
     dfJoined.show()
   }
 
+  /**
+   *
+   * @param sparkSession   Session of Spark
+   * @param file           Path of the file which we want to read
+   * @param delimiter      Separate column in file
+   * @param header         true if the file content header line and false if not
+   * @return               Dataframe from data file
+   */
+  def readDataFrameFromFile(sparkSession: SparkSession,file: String,delimiter: String, header:Boolean,
+                            schema: StructType): DataFrame = {
+    try {
+      val dataFrame = sparkSession.read
+        .format("com.databricks.spark.csv")
+        .option("delimiter", delimiter)
+        .option("header", header)
+        .schema(schema)
+        .load(file)
+      traceLog.info("****************** SUCCESS *************************")
+      return dataFrame
+    } catch {
+      case exception: Exception => traceLog.error(s"Exception: ${exception.getMessage}")
+    }
+    null
+  }
 }

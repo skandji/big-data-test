@@ -4,6 +4,8 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructField, StructType, TimestampType}
 import utilities.UtilsSpark
 import org.elasticsearch.spark.sql._
+import org.apache.commons.httpclient.HttpConnectionManager
+import org.apache.commons.httpclient._
 
 object SparkAndElasticSearch {
 
@@ -13,6 +15,7 @@ object SparkAndElasticSearch {
     sparkSession.conf.set("es.nodes", "http://localhost")
     sparkSession.conf.set("es.port", "9200")
     sparkSession.conf.set("es.nodes.wan.only", "true")
+    sparkSession.conf.set("es.resource.write", "jea_db/orders")
     // sparkSession.conf.set("spark.es.nodes.wan.only", "true")
     sparkSession.conf.set("es.http.timeout", "1000s")
 

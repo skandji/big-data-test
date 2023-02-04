@@ -126,7 +126,6 @@ object SparkAndMysql {
     try {
       dataFrame.write
         .format("jdbc")
-        .option("driver", mySqlDriver)
         .option("url", s"jdbc:mysql://${url}/${dbName}")
         .option("dbtable", s"${tableName}")
         .option("user", s"${userName}")
@@ -139,8 +138,6 @@ object SparkAndMysql {
       case exception: SQLException => traceLog.error(s"SQL Exception: ${exception.getMessage}")
       case exception: CommunicationsException => traceLog.error(s"Communication link failure: ${exception.getMessage}")
       case exception: Exception => traceLog.error(s"Exception: ${exception.getMessage}")
-
     }
   }
-
 }

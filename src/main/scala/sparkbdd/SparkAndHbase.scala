@@ -1,9 +1,12 @@
 package sparkbdd
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.execution.datasources.hbase._
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructField, StructType, TimestampType}
 import utilities.UtilsSpark
+import org.apache.hadoop.hbase.spark.datasources._
+
+import org.apache.hadoop.hbase.spark.HBaseContext
+import org.apache.hadoop.hbase.HBaseConfiguration
 
 object SparkAndHbase {
 
@@ -33,6 +36,9 @@ object SparkAndHbase {
   }
 
   def writeOnHbase(sparkSession: SparkSession) = {
+    val conf = HBaseConfiguration.create()
+    conf.set("hbase.zookeeper.quorum", "127.0.0.1:2181")
+    new HBaseContext(sparkSession.sparkContext, conf)
     val schemaOrder = StructType(Array(
       StructField("orderid", IntegerType, false),
       StructField("customerid", IntegerType, false),
@@ -55,8 +61,7 @@ object SparkAndHbase {
       .load("C:\\Users\\hp\\IdeaProjects\\BigdataTest\\src\\main\\resources\\data\\orders.txt")
 
     dfOrders.write
-      .option("hbase.spark.use.hbasecontext", true)
-      .format("org.apache.spark.sql.execution.datasources.hbase")
+      .format("org.apache.hadoop.hbase.spark")
       .options(Map(HBaseTableCatalog.tableCatalog -> catalogOrders, HBaseTableCatalog.newTable -> "3"))
       .save()
   }
