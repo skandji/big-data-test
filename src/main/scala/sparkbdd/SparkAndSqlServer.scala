@@ -18,7 +18,7 @@ object SparkAndSqlServer {
   }
 
   def testDbSqlServer(sparkSession: SparkSession) = {
-    val dfSqlServer1 = sparkSession.read.jdbc("jdbc:sqlserver://mssqlserver/localhost:1433;integratedSecurity=true;" +
+    val dfSqlServer1 = sparkSession.read.jdbc("jdbc:sqlserver://mssqlserver/192.168.1.179:1433;integratedSecurity=true;" +
       "databaseName=jea_db", "orders", properties)
 
     dfSqlServer1.show(15)

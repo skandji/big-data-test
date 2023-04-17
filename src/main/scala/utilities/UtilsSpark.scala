@@ -1,7 +1,9 @@
 package utilities
 
 import org.apache.logging.log4j.{LogManager, Logger}
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 import java.io.FileNotFoundException
 
@@ -12,7 +14,7 @@ object UtilsSpark {
 
   def sparkSession(env: Boolean = true): SparkSession = {
     try {
-      if (env == true) {
+      if (env) {
         System.setProperty("hadoop.home.dir", "C:/Hadoop") // sur windows = "C:/Hadoop/"
         ss = SparkSession.builder()
           .master("local[*]")
@@ -36,5 +38,20 @@ object UtilsSpark {
 
     ss
 
+  }
+
+  def getSparkStreamingContext(env: Boolean = true, batchDuration: Int): StreamingContext = {
+    traceLog.info("initialisation du contexte Spark Streaming")
+    val sparkConf = new SparkConf()
+    if (env) {
+      sparkConf.setMaster("local[*]")
+        .setAppName("Mon application streaming")
+    } else {
+      sparkConf.setAppName("Mon application streaming")
+    }
+    traceLog.info(s"la durée du micro-bacth Spark est définie à : $batchDuration secondes")
+    val streamingContext : StreamingContext = new StreamingContext(sparkConf, Seconds(batchDuration))
+
+    streamingContext
   }
 }
